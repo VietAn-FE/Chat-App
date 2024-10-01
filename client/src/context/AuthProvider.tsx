@@ -1,24 +1,24 @@
-'use client'
+"use client";
 import { auth } from "@/firebase/config";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext({});
 
 interface UserData {
-  displayName: string | null;
+  displayName: string;
   email: string | null;
-  uid: string | number | null;
+  uid: string | number;
   photoURL: string | null;
 }
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const userouter = useRouter();
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const pathname = usePathname();
+  const [userData, setUserData] = useState<UserData | {}>({});
 
   useEffect(() => {
     const unsubscibed = auth.onAuthStateChanged((user) => {
-    //   console.log(user);
       if (user) {
         const { displayName, email, uid, photoURL } = user;
         setUserData({
@@ -27,10 +27,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           uid,
           photoURL,
         });
-        userouter.push("/rooms");
+        if (pathname == "/login") {
+          userouter.push("/rooms");
+        }
         return;
+      }else{
+        userouter.push("/");
       }
-      userouter.push("/");
     });
     return () => {
       unsubscibed();

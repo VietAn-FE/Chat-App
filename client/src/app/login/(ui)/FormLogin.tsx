@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 const fbProvider = new FacebookAuthProvider();
 
 const LoginForm = () => {
+  const userouter = useRouter();
+  
   const handleFblogin = async () => {
     try {
       const result = await signInWithPopup(auth, fbProvider);
@@ -33,6 +35,8 @@ const LoginForm = () => {
           createdAt: new Date(),
         });
       }
+
+      userouter.push("/rooms");
     } catch (error) {}
   };
 
